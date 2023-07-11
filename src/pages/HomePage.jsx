@@ -1,8 +1,55 @@
 import styled from "styled-components"
 import { BiExit } from "react-icons/bi"
 import { AiOutlineMinusCircle, AiOutlinePlusCircle } from "react-icons/ai"
+import { useState, useEffect } from "react";
+import axios from "axios";
+import { useNavigate  } from "react-router-dom";
 
 export default function HomePage() {
+  const [transactions, setTransactions] = useState([]);
+  const [balance, setBalance] = useState(0);
+  const navigate = useNavigate();
+
+  const handleNovaEntradaClick = () => {
+    navigate("/nova-transacao/entrada");
+  };
+
+  const handleNovaSaidaClick = () => {
+    navigate("/nova-transacao/saida");
+  };
+
+  useEffect(() => {
+    const fetchTransactions = async () => {
+      try {
+        const token = localStorage.getItem("token");
+  
+        const response = await axios.get("http://localhost:5000/transactions", {
+          headers: {
+            token: token,
+          },
+        });
+  
+        const res = response.data;
+        const { transactions } = response.data;
+        console.log(res);
+  
+        // Calcula o saldo somando os valores das transações
+        const total = transactions.reduce((sum, transaction) => {
+          return transaction.type === "entrada"
+            ? sum + transaction.value
+            : sum - transaction.value;
+        }, 0);
+  
+        setTransactions(transactions);
+        setBalance(total);
+      } catch (error) {
+        console.log(error.response.data);
+      }
+    };
+  
+    fetchTransactions();
+  }, []);
+
   return (
     <HomeContainer>
       <Header>
@@ -10,45 +57,42 @@ export default function HomePage() {
         <BiExit />
       </Header>
 
-      <TransactionsContainer>
-        <ul>
-          <ListItemContainer>
+    <TransactionsContainer>
+      <ul>
+        {transactions.map((transaction) => (
+          <ListItemContainer key={transaction._id}>
             <div>
-              <span>30/11</span>
-              <strong>Almoço mãe</strong>
+              <span>{transaction.date}</span>
+              <strong>{transaction.description}</strong>
             </div>
-            <Value color={"negativo"}>120,00</Value>
+            <Value color={transaction.type === "entrada" ? "positivo" : "negativo"}>
+              {transaction.value.toFixed(2)}
+            </Value>
           </ListItemContainer>
+        ))}
+      </ul>
 
-          <ListItemContainer>
-            <div>
-              <span>15/11</span>
-              <strong>Salário</strong>
-            </div>
-            <Value color={"positivo"}>3000,00</Value>
-          </ListItemContainer>
-        </ul>
+      <article>
+        <strong>Saldo</strong>
+        <Value color={balance >= 0 ? "positivo" : "negativo"}>
+          {balance.toFixed(2)}
+        </Value>
+      </article>
+    </TransactionsContainer>
 
-        <article>
-          <strong>Saldo</strong>
-          <Value color={"positivo"}>2880,00</Value>
-        </article>
-      </TransactionsContainer>
-
-
-      <ButtonsContainer>
-        <button>
-          <AiOutlinePlusCircle />
-          <p>Nova <br /> entrada</p>
-        </button>
-        <button>
-          <AiOutlineMinusCircle />
-          <p>Nova <br />saída</p>
-        </button>
-      </ButtonsContainer>
+    <ButtonsContainer>
+      <button onClick={handleNovaEntradaClick}>
+        <AiOutlinePlusCircle />
+        <p>Nova<br />entrada</p>
+      </button>
+      <button onClick={handleNovaSaidaClick}>
+        <AiOutlineMinusCircle />
+        <p>Nova<br />saída</p>
+      </button>
+    </ButtonsContainer>
 
     </HomeContainer>
-  )
+  );
 }
 
 const HomeContainer = styled.div`
