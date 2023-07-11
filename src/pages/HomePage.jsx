@@ -24,12 +24,11 @@ export default function HomePage() {
   };
 
   useEffect(() => {
-    const VITE_API_URL = 'http://localhost:5000'
     const fetchTransactions = async () => {
       try {
         const token = localStorage.getItem("token");
   
-        const response = await axios.get(`${VITE_API_URL}/transactions`, {
+        const response = await axios.get(`${import.meta.env.VITE_API_URL}/transactions`, {
           headers: {
             token: token,
           },
