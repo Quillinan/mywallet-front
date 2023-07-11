@@ -9,6 +9,7 @@ export default function HomePage() {
   const [transactions, setTransactions] = useState([]);
   const [balance, setBalance] = useState(0);
   const navigate = useNavigate();
+  const [username, setUsername] = useState("");
 
   const handleNovaEntradaClick = () => {
     navigate("/nova-transacao/entrada");
@@ -23,10 +24,25 @@ export default function HomePage() {
     navigate("/");
   };
 
+  const token = localStorage.getItem("token");
+
   useEffect(() => {
+    const fetchUserName = async () => {
+      try {
+        
+        const response = await axios.get(`${import.meta.env.VITE_API_URL}/users/username`, {
+          headers: {
+            token: token,
+          },
+        });
+        setUsername(response.data.name);
+      } catch (error) {
+        console.log(error.response.data);
+      }
+    };
+
     const fetchTransactions = async () => {
       try {
-        const token = localStorage.getItem("token");
   
         const response = await axios.get(`${import.meta.env.VITE_API_URL}/transactions`, {
           headers: {
@@ -36,7 +52,6 @@ export default function HomePage() {
   
         const { transactions} = response.data;
   
-        // Calcula o saldo somando os valores das transações
         const total = transactions.reduce((sum, transaction) => {
           return transaction.type === "entrada"
             ? sum + transaction.value
@@ -50,13 +65,14 @@ export default function HomePage() {
       }
     };
   
+    fetchUserName();
     fetchTransactions();
   }, []);
 
   return (
     <HomeContainer>
       <Header>
-        <h1 data-test="user-name">Olá</h1>
+        <h1 data-test="user-name">Olá {username}</h1>
         <BiExit data-test="logout" onClick={handleLogout} />
       </Header>
 
