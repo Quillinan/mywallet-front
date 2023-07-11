@@ -57,8 +57,8 @@ export default function HomePage() {
   return (
     <HomeContainer>
       <Header>
-        <h1>Olá</h1>
-        <BiExit onClick={handleLogout} />
+        <h1 data-test="user-name">Olá</h1>
+        <BiExit data-test="logout" onClick={handleLogout} />
       </Header>
 
     <TransactionsContainer>
@@ -67,9 +67,11 @@ export default function HomePage() {
           <ListItemContainer key={transaction._id}>
             <div>
               <span>{transaction.date}</span>
-              <strong>{transaction.description}</strong>
+              <strong data-test="registry-name">{transaction.description}</strong>
             </div>
-            <Value color={transaction.type === "entrada" ? "positivo" : "negativo"}>
+            <Value
+              data-test="registry-amount"
+              color={transaction.type === "entrada" ? "positivo" : "negativo"}>
               {transaction.value.toFixed(2)}
             </Value>
           </ListItemContainer>
@@ -78,18 +80,24 @@ export default function HomePage() {
 
       <article>
         <strong>Saldo</strong>
-        <Value color={balance >= 0 ? "positivo" : "negativo"}>
+        <Value 
+          data-test="total-amount"
+          color={balance >= 0 ? "positivo" : "negativo"}>
           {balance.toFixed(2)}
         </Value>
       </article>
     </TransactionsContainer>
 
     <ButtonsContainer>
-      <button onClick={handleNovaEntradaClick}>
+      <button
+        data-test="new-income"
+        onClick={handleNovaEntradaClick}>
         <AiOutlinePlusCircle />
         <p>Nova<br />entrada</p>
       </button>
-      <button onClick={handleNovaSaidaClick}>
+      <button
+        data-test="new-expense"
+        onClick={handleNovaSaidaClick}>
         <AiOutlineMinusCircle />
         <p>Nova<br />saída</p>
       </button>
