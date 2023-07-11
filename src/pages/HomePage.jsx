@@ -24,19 +24,18 @@ export default function HomePage() {
   };
 
   useEffect(() => {
+    const VITE_API_URL = 'http://localhost:5000'
     const fetchTransactions = async () => {
       try {
         const token = localStorage.getItem("token");
   
-        const response = await axios.get("http://localhost:5000/transactions", {
+        const response = await axios.get(`${VITE_API_URL}/transactions`, {
           headers: {
             token: token,
           },
         });
   
-        const res = response.data;
-        const { transactions } = response.data;
-        console.log(res);
+        const { transactions} = response.data;
   
         // Calcula o saldo somando os valores das transações
         const total = transactions.reduce((sum, transaction) => {
@@ -58,7 +57,7 @@ export default function HomePage() {
   return (
     <HomeContainer>
       <Header>
-        <h1>Olá, Fulano</h1>
+        <h1>Olá</h1>
         <BiExit onClick={handleLogout} />
       </Header>
 

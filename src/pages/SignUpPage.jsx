@@ -14,13 +14,13 @@ export default function SignUpPage() {
   const handleSignUp = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post("http://localhost:5000/users/signup", {
+      const VITE_API_URL = 'http://localhost:5000'
+      const response = await axios.post(`${VITE_API_URL}/users/signup`, {
         name,
         email,
         password,
       });
-      console.log(response.data); // Dados da resposta do backend
-      navigate("/"); // Redireciona para a página de login após o cadastro
+      navigate("/");
     } catch (error) {
       console.log(error.response.data);
     }

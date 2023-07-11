@@ -13,7 +13,8 @@ export default function TransactionsPage() {
     e.preventDefault();
     
     try {
-      const response = await axios.post(`http://localhost:5000/transactions/${tipo}`, {
+      const VITE_API_URL = "http://localhost:5000"
+      const response = await axios.post(`${VITE_API_URL}/transactions/${tipo}`, {
         value: Number(value),
         description
       }, {

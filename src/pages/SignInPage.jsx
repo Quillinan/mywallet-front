@@ -12,10 +12,12 @@ export default function SignInPage() {
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post("http://localhost:5000/users/signin", {
+      const VITE_API_URL = 'http://localhost:5000'
+      const response = await axios.post(`${VITE_API_URL}/users/signin`, {
         email,
         password,
       });
+      console.log(response);
       const { token } = response.data;
       localStorage.setItem("token", token);
       console.log(token);
