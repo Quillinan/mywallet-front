@@ -18,6 +18,11 @@ export default function HomePage() {
     navigate("/nova-transacao/saida");
   };
 
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    navigate("/");
+  };
+
   useEffect(() => {
     const fetchTransactions = async () => {
       try {
@@ -54,7 +59,7 @@ export default function HomePage() {
     <HomeContainer>
       <Header>
         <h1>Olá, Fulano</h1>
-        <BiExit />
+        <BiExit onClick={handleLogout} />
       </Header>
 
     <TransactionsContainer>
