@@ -1,16 +1,54 @@
 import styled from "styled-components"
+import { useState } from "react";
+import axios from "axios";
+import { useNavigate, useParams } from "react-router-dom";
 
 export default function TransactionsPage() {
+  const [value, setValue] = useState("");
+  const [description, setDescription] = useState("");
+  const { tipo } = useParams();
+  const navigate = useNavigate();
+
+  const handleSaveTransaction = async (e) => {
+    e.preventDefault();
+    
+    try {
+      const response = await axios.post(`http://localhost:5000/transactions/${tipo}`, {
+        value: Number(value),
+        description
+      }, {
+        headers: {
+          token: localStorage.getItem("token")
+        }
+      });
+
+      console.log(response.data);
+      navigate("/home");
+    } catch (error) {
+      console.log(error.response.data);
+    }
+  };
+
   return (
     <TransactionsContainer>
       <h1>Nova TRANSAÇÃO</h1>
-      <form>
-        <input placeholder="Valor" type="text"/>
-        <input placeholder="Descrição" type="text" />
-        <button>Salvar TRANSAÇÃO</button>
+      <form onSubmit={handleSaveTransaction}>
+        <input
+          placeholder="Valor"
+          type="number"
+          value={value}
+          onChange={(e) => setValue(e.target.value)}
+        />
+        <input
+          placeholder="Descrição"
+          type="text"
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
+        />
+        <button type="submit">Salvar TRANSAÇÃO</button>
       </form>
     </TransactionsContainer>
-  )
+  );
 }
 
 const TransactionsContainer = styled.main`
